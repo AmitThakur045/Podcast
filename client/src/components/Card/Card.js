@@ -6,7 +6,7 @@ const Card = ({ title, icon, children }) => {
     <div className={styles.card}>
       <div className={styles.heading}>
         {icon}
-        <h1 className={styles.headingtext}>Welcome the PodCast!!</h1>
+        <h1 className={styles.headingtext}>{title}</h1>
       </div>
       {children}
     </div>
