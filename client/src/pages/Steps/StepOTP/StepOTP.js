@@ -4,11 +4,30 @@ import { AiFillLock } from "react-icons/ai";
 import TextInput from "../../../components/TextInput/TextInput";
 import Button from "../../../components/Button/Button";
 import styles from "./StepOTP.module.css";
+import { verifyOtp } from "../../../API";
+import { useSelector, useDispatch } from "react-redux";
+import { setAuth } from "../../../store/authSlice";
 
 const StepOTP = ({ onClick }) => {
   const [otp, setOtp] = useState("");
+  const dispatch = useDispatch();
+  // fetching the phone and hash from global auth store
+  const { phone, hash } = useSelector((state) => state.auth.otp);
 
-  const next = () => {};
+  const handleSubmit = async () => {
+    try {
+      const { data } = await verifyOtp({
+        otp,
+        phone,
+        hash,
+      });
+      console.log(data);
+      dispatch(setAuth(data));
+      onClick();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -19,7 +38,7 @@ const StepOTP = ({ onClick }) => {
         >
           <TextInput value={otp} onChange={(e) => setOtp(e.target.value)} />
           <div className={styles.actionButtonWrap}>
-            <Button onClick={next} text="Next" />
+            <Button onClick={handleSubmit} text="Next" />
           </div>
           <p className={styles.paragraph}>
             By entering your number, you're agreeing to our Terms of Service and

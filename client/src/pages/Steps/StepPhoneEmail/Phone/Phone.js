@@ -4,9 +4,19 @@ import Button from "../../../../components/Button/Button";
 import { AiFillPhone } from "react-icons/ai";
 import TextInput from "../../../../components/TextInput/TextInput";
 import styles from "../StepPhoneEmail.module.css";
+import { sendOtp } from "../../../../API";
+import { useDispatch } from "react-redux";
+import { setOtp } from "../../../../store/authSlice";
 
-const Phone = ({ onClick }) => {
+const Phone = () => {
   const [phone, setPhone] = useState("");
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    // server request
+    const { data } = await sendOtp({ phone: phone });
+    dispatch(setOtp({ phone: data.phone, hash: data.hash }));
+  };
 
   return (
     <Card
@@ -20,7 +30,7 @@ const Phone = ({ onClick }) => {
       />
       <div>
         <div className={styles.actionButtonWrap}>
-          <Button onClick={onClick} text="Next" />
+          <Button onClick={handleSubmit} text="Next" />
         </div>
         <p className={styles.paragraph}>
           By entering your number, you're agreeing to our Terms of Service and

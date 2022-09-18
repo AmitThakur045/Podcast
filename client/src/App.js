@@ -6,13 +6,11 @@ import Navbar from "./components/Navbar/Navbar";
 import Authenticate from "./pages/Authenticate/Authenticate";
 import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
-
-const isAuth = false;
-const user = {
-  activated: true,
-};
+import { useSelector } from "react-redux";
 
 const GuestRoute = ({ children }) => {
+  const { isAuth } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (isAuth) {
@@ -24,6 +22,8 @@ const GuestRoute = ({ children }) => {
 };
 
 const SemiProtectedRoutes = ({ children }) => {
+  const { user, isAuth } = useSelector((state) => state.auth);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuth) {
@@ -39,6 +39,8 @@ const SemiProtectedRoutes = ({ children }) => {
 };
 
 const ProtectedRoute = ({ children }) => {
+  const { user, isAuth } = useSelector((state) => state.auth);
+  
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuth) {
