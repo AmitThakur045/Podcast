@@ -29,10 +29,12 @@ class TokenService {
   }
 
   async verifyAccessToken(token) {
+    // return payload if it's valid
     return jwt.verify(token, accessTokenSeceret);
   }
 
   async verifyRefreshToken(refreshToken) {
+    // return payload if it's valid
     return jwt.verify(refreshToken, refreshTokenSecret);
   }
 

@@ -13,6 +13,7 @@ const Phone = ({ onClick }) => {
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
+    if (!phone) return;
     // server request
     try {
       const { data } = await sendOtp({ phone: phone });

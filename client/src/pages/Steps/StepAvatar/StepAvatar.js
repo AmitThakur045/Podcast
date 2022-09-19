@@ -8,15 +8,20 @@ import { setAvatar } from "../../../store/activateSlice";
 import profile from "../../../Assets/image/profile.jpg";
 import { activate } from "../../../API";
 import { setAuth } from "../../../store/authSlice";
+import Loader from "../../../components/Loader/Loader";
 
 const StepAvatar = ({ onClick }) => {
   const [image, setImage] = useState(profile);
+  const [loading, setLoading] = useState(false);
+
   const { name, avatar } = useSelector((state) => state.activate);
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
+    if (!name || !avatar) return;
     // create a request to server to activate the user and
     // upload the base64 string of image and name
+    setLoading(true);
     try {
       const { data } = await activate({ name, avatar });
 
@@ -27,6 +32,8 @@ const StepAvatar = ({ onClick }) => {
     } catch (err) {
       // toastify
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,6 +48,10 @@ const StepAvatar = ({ onClick }) => {
       dispatch(setAvatar(reader.result));
     };
   };
+
+  if (loading) {
+    return <Loader message="Activation in Progress..." />;
+  }
 
   return (
     <div className={styles.cardWrapper}>

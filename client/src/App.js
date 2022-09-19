@@ -8,6 +8,7 @@ import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
 import { useSelector } from "react-redux";
 import { useLoadingRefresh } from "./hooks/useLoadingWithRefresh";
+import Loader from "./components/Loader/Loader";
 
 const GuestRoute = ({ children }) => {
   const { isAuth } = useSelector((state) => state.auth);
@@ -17,7 +18,7 @@ const GuestRoute = ({ children }) => {
     if (isAuth) {
       navigate("/rooms");
     }
-  }, [isAuth]);
+  }, [isAuth, navigate]);
 
   return <>{isAuth ? navigate("/rooms") : children}</>;
 };
@@ -34,7 +35,7 @@ const SemiProtectedRoutes = ({ children }) => {
     if (isAuth && user.activated) {
       navigate("/rooms");
     }
-  }, [isAuth, user]);
+  }, [isAuth, user, navigate]);
 
   return <>{isAuth && !user.activated && children}</>;
 };
@@ -51,17 +52,18 @@ const ProtectedRoute = ({ children }) => {
     if (isAuth && !user.activated) {
       navigate("/activate");
     }
-  }, [isAuth, user]);
+  }, [isAuth, user, navigate]);
 
   return <>{isAuth && user.activated && children}</>;
 };
 
 function App() {
   const { loading } = useLoadingRefresh();
+  // const loading = true;
   return (
     <>
       {loading ? (
-        <div>Loading..</div>
+        <Loader message="Loading, please wait..." />
       ) : (
         <BrowserRouter>
           <Navbar />

@@ -5,6 +5,7 @@ import styles from "./Navbar.module.css";
 import { logout } from "../../API";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../store/authSlice";
+import { setAvatar, setName } from "../../store/activateSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,8 @@ const Navbar = () => {
     try {
       const { data } = await logout();
       dispatch(setAuth(data));
+      dispatch(setName(""));
+      dispatch(setAvatar(""));
     } catch (err) {
       console.log(err);
     }
