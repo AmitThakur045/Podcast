@@ -164,6 +164,20 @@ class AuthControllers {
     // making auth true to make client understand that the authentication went smoothly
     res.json({ user: userDto, auth: true });
   }
+
+  async logout(req, res) {
+    const { refreshtoken } = req.cookies;
+    // delete refresh token from db
+    await tokenService.removeToken(refreshtoken);
+    // delete cookies
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
+
+    res.json({
+      user: null,
+      auth: false,
+    });
+  }
 }
 
 module.exports = new AuthControllers();

@@ -34,7 +34,7 @@ const SemiProtectedRoutes = ({ children }) => {
     if (isAuth && user.activated) {
       navigate("/rooms");
     }
-  }, [isAuth, user.activated]);
+  }, [isAuth, user]);
 
   return <>{isAuth && !user.activated && children}</>;
 };
@@ -51,7 +51,7 @@ const ProtectedRoute = ({ children }) => {
     if (isAuth && !user.activated) {
       navigate("/activate");
     }
-  }, [isAuth, user.activated]);
+  }, [isAuth, user]);
 
   return <>{isAuth && user.activated && children}</>;
 };

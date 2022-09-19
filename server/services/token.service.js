@@ -7,7 +7,7 @@ const refreshTokenSecret = process.env.JWT_REFRESH_TOKEN_SECRET;
 class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, accessTokenSeceret, {
-      expiresIn: "1m",
+      expiresIn: "10d",
     });
     // refresh token will be used to generate referesh token
     const refreshToken = jwt.sign(payload, refreshTokenSecret, {
@@ -45,6 +45,10 @@ class TokenService {
 
   async updateRefreshToken(userId, refreshToken) {
     return await refreshModel.updateOne({ userId }, { token: refreshToken });
+  }
+
+  async removeToken(refreshToken) {
+    return await refreshModel.deleteOne({ token: refreshToken });
   }
 }
 
