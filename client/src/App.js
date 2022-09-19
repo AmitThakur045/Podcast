@@ -33,14 +33,14 @@ const SemiProtectedRoutes = ({ children }) => {
     if (isAuth && user.activated) {
       navigate("/rooms");
     }
-  }, [isAuth]);
+  }, [isAuth, user.activated]);
 
   return <>{isAuth && !user.activated && children}</>;
 };
 
 const ProtectedRoute = ({ children }) => {
   const { user, isAuth } = useSelector((state) => state.auth);
-  
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!isAuth) {
@@ -50,7 +50,7 @@ const ProtectedRoute = ({ children }) => {
     if (isAuth && !user.activated) {
       navigate("/activate");
     }
-  }, [isAuth]);
+  }, [isAuth, user.activated]);
 
   return <>{isAuth && user.activated && children}</>;
 };

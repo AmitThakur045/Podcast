@@ -85,14 +85,23 @@ class AuthControllers {
       activated: false,
     });
 
+    // saving the refresh token to database
+    tokenService.storeRefreshToken(refreshToken, user._id);
+
     res.cookie("refreshtoken", refreshToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+      httpOnly: true, // only server can read
+    });
+
+    res.cookie("accesstoken", accessToken, {
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       httpOnly: true, // only server can read
     });
 
     // transforming the user object
     const userDto = new UserDto(user);
-    res.json({ accessToken, user: userDto });
+    // making auth true to make client understand that the authentication went smoothly
+    res.json({ user: userDto, auth: true });
   }
 }
 

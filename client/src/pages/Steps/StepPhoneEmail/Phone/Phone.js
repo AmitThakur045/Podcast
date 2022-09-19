@@ -8,14 +8,19 @@ import { sendOtp } from "../../../../API";
 import { useDispatch } from "react-redux";
 import { setOtp } from "../../../../store/authSlice";
 
-const Phone = () => {
+const Phone = ({ onClick }) => {
   const [phone, setPhone] = useState("");
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     // server request
-    const { data } = await sendOtp({ phone: phone });
-    dispatch(setOtp({ phone: data.phone, hash: data.hash }));
+    try {
+      const { data } = await sendOtp({ phone: phone });
+      dispatch(setOtp({ phone: data.phone, hash: data.hash }));
+      onClick();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

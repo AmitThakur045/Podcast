@@ -2,7 +2,7 @@ const UserModel = require("../models/user.model");
 
 class UserService {
   async findUser(filter) {
-    const user = await UserModel.findOne(filter);
+    let user = await UserModel.findOne(filter);
     return user;
   }
 
