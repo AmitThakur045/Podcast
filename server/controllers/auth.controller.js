@@ -103,6 +103,67 @@ class AuthControllers {
     // making auth true to make client understand that the authentication went smoothly
     res.json({ user: userDto, auth: true });
   }
+
+  async refresh(req, res) {
+    // get the refresh token from cookie
+    const { refreshtoken: refreshTokenFromCookie } = req.cookies;
+    let userData;
+    // check if refresh token is valid
+    try {
+      userData = await tokenService.verifyRefreshToken(refreshTokenFromCookie);
+    } catch (err) {
+      return res.status(401).message({ message: "Invalid Token" });
+    }
+
+    try {
+      const token = await tokenService.findRefreshToken(
+        userData._id,
+        refreshTokenFromCookie
+      );
+
+      if (!token) {
+        return res.status(401).json({ message: "Invalid Token" });
+      }
+    } catch (err) {
+      return res.status(500).json({ message: "Internal Error" });
+    }
+
+    // check if user is valid
+    const user = await userService.findUser({ _id: userData._id });
+    if (!user) {
+      return res.status(404).json({ message: "No User found" });
+    }
+
+    // generate new Tokens
+    const { accessToken, refreshToken } = tokenService.generateTokens({
+      _id: userData._id,
+    });
+
+    // Update the referesh token
+    try {
+      await tokenService.updateRefreshToken(userData._id, refreshToken);
+    } catch (err) {
+      return res
+        .status(500)
+        .json({ message: "could not update the refresh token" });
+    }
+
+    // update the cookies
+    res.cookie("refreshtoken", refreshToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+      httpOnly: true, // only server can read
+    });
+
+    res.cookie("accesstoken", accessToken, {
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+      httpOnly: true, // only server can read
+    });
+
+    // transforming the user object
+    const userDto = new UserDto(user);
+    // making auth true to make client understand that the authentication went smoothly
+    res.json({ user: userDto, auth: true });
+  }
 }
 
 module.exports = new AuthControllers();

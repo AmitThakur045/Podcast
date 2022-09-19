@@ -7,6 +7,7 @@ import Authenticate from "./pages/Authenticate/Authenticate";
 import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
 import { useSelector } from "react-redux";
+import { useLoadingRefresh } from "./hooks/useLoadingWithRefresh";
 
 const GuestRoute = ({ children }) => {
   const { isAuth } = useSelector((state) => state.auth);
@@ -40,8 +41,8 @@ const SemiProtectedRoutes = ({ children }) => {
 
 const ProtectedRoute = ({ children }) => {
   const { user, isAuth } = useSelector((state) => state.auth);
-
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!isAuth) {
       navigate("/");
@@ -56,51 +57,58 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  const { loading } = useLoadingRefresh();
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route
-          path="/"
-          exact
-          element={
-            <GuestRoute>
-              <Home />
-            </GuestRoute>
-          }
-        />
+    <>
+      {loading ? (
+        <div>Loading..</div>
+      ) : (
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route
+              path="/"
+              exact
+              element={
+                <GuestRoute>
+                  <Home />
+                </GuestRoute>
+              }
+            />
 
-        <Route
-          path="/authenticate"
-          exact
-          element={
-            <GuestRoute>
-              <Authenticate />
-            </GuestRoute>
-          }
-        />
+            <Route
+              path="/authenticate"
+              exact
+              element={
+                <GuestRoute>
+                  <Authenticate />
+                </GuestRoute>
+              }
+            />
 
-        <Route
-          path="/activate"
-          exact
-          element={
-            <SemiProtectedRoutes>
-              <Activate />
-            </SemiProtectedRoutes>
-          }
-        />
+            <Route
+              path="/activate"
+              exact
+              element={
+                <SemiProtectedRoutes>
+                  <Activate />
+                </SemiProtectedRoutes>
+              }
+            />
 
-        <Route
-          path="/rooms"
-          exact
-          element={
-            <ProtectedRoute>
-              <Rooms />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+            <Route
+              path="/rooms"
+              exact
+              element={
+                <ProtectedRoute>
+                  <Rooms />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      )}
+    </>
   );
 }
 
