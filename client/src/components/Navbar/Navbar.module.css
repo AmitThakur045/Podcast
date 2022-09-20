@@ -4,3 +4,22 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.rightElement {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #0077ff;
+  width: 40px;
+  aspect-ratio: 1;
+  margin: 0 10px;
+}
+
+.logoutButton {
+  background: none;
+  cursor: pointer;
+}

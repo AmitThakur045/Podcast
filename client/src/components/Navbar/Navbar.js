@@ -6,10 +6,11 @@ import { logout } from "../../API";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../store/authSlice";
 import { setAvatar, setName } from "../../store/activateSlice";
+import { AiOutlineLogout } from "react-icons/ai";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth);
 
   const logoStyle = {
     color: "#fff",
@@ -38,10 +39,23 @@ const Navbar = () => {
   return (
     <nav className={`container ${styles.navbar}`}>
       <Link to="/" style={logoStyle}>
-        <BsFillMicFill color="#ffcd3a" />
+        <BsFillMicFill color="#ffcd3a" fontSize={20} />
         <span style={logoText}>PodCast</span>
       </Link>
-      {isAuth && <button onClick={logoutHandler}>Logout</button>}
+
+      <div className={styles.rightElement}>
+        <h3>{user.name}</h3>
+        <Link to="/">
+          <img
+            className={styles.avatar}
+            src={user.avatar}
+            alt="avatar"
+          />
+        </Link>
+        <button className={styles.logoutButton} onClick={logoutHandler}>
+          <AiOutlineLogout color="#ffcd3a" fontSize={30} />
+        </button>
+      </div>
     </nav>
   );
 };

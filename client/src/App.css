@@ -1,6 +1,9 @@
 html {
-  box-sizing: border-box;
   font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body,
@@ -8,7 +11,7 @@ h1,
 h2,
 h3,
 h4,
-h5, 
+h5,
 h6,
 p,
 ol,
@@ -19,7 +22,7 @@ ul {
   -webkit-font-smoothing: antialised;
 }
 
-ol, 
+ol,
 ul {
   list-style: none;
 }
@@ -32,7 +35,14 @@ img {
 body {
   background: #121212;
   color: white;
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font: bold;
 }
 
 .container {

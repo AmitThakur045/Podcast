@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "../../../components/Card/Card";
 import Button from "../../../components/Button/Button";
 import { BsEmojiSunglassesFill } from "react-icons/bs";
@@ -13,6 +13,7 @@ import Loader from "../../../components/Loader/Loader";
 const StepAvatar = ({ onClick }) => {
   const [image, setImage] = useState(profile);
   const [loading, setLoading] = useState(false);
+  const [unMounted, setUnMounted] = useState(false);
 
   const { name, avatar } = useSelector((state) => state.activate);
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const StepAvatar = ({ onClick }) => {
 
       if (data.auth) {
         // updating the user credentials in store
-        dispatch(setAuth(data));
+        if (unMounted) dispatch(setAuth(data));
       }
     } catch (err) {
       // toastify
@@ -36,6 +37,12 @@ const StepAvatar = ({ onClick }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      setUnMounted(true);
+    };
+  }, []);
 
   const handleImage = (e) => {
     const file = e.target.files[0];
