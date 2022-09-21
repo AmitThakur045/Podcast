@@ -4,13 +4,27 @@ import TextInput from "../TextInput/TextInput";
 import { ImEarth, ImCancelCircle } from "react-icons/im";
 import { HiUsers } from "react-icons/hi";
 import { AiFillLock } from "react-icons/ai";
+import { createRoom } from "../../API";
+import { useNavigate } from "react-router-dom";
 
 const AddRoomModal = ({ onClose }) => {
   const [roomType, setRoomType] = useState("open");
   const [topic, setTopic] = useState("");
+  const navigate = useNavigate();
 
-  const submitHandler = () => {
-    
+  const submitHandler = async () => {
+    // validation
+    if (!topic || !roomType) {
+      return;
+    }
+
+    // server request
+    try {
+      const { data } = await createRoom({ topic, roomType });
+      navigate(`/room/${data.id}`);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

@@ -9,6 +9,7 @@ import Rooms from "./pages/Rooms/Rooms";
 import { useSelector } from "react-redux";
 import { useLoadingRefresh } from "./hooks/useLoadingWithRefresh";
 import Loader from "./components/Loader/Loader";
+import MainRoom from "./pages/MainRoom.js/MainRoom";
 
 const GuestRoute = ({ children }) => {
   const { isAuth } = useSelector((state) => state.auth);
@@ -104,6 +105,16 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Rooms />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/rooms/:id"
+              exact
+              element={
+                <ProtectedRoute>
+                  <MainRoom />
                 </ProtectedRoute>
               }
             />
