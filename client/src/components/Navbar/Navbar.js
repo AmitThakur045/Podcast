@@ -43,19 +43,17 @@ const Navbar = () => {
         <span style={logoText}>PodCast</span>
       </Link>
 
-      <div className={styles.rightElement}>
-        <h3>{user.name}</h3>
-        <Link to="/">
-          <img
-            className={styles.avatar}
-            src={user.avatar}
-            alt="avatar"
-          />
-        </Link>
-        <button className={styles.logoutButton} onClick={logoutHandler}>
-          <AiOutlineLogout color="#ffcd3a" fontSize={30} />
-        </button>
-      </div>
+      {isAuth && user.activated && (
+        <div className={styles.rightElement}>
+          <h3>{user?.name}</h3>
+          <Link to="/">
+            <img className={styles.avatar} src={user.avatar} alt="avatar" />
+          </Link>
+          <button className={styles.logoutButton} onClick={logoutHandler}>
+            <AiOutlineLogout color="#ffcd3a" fontSize={30} />
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

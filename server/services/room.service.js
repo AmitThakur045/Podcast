@@ -13,6 +13,14 @@ class RoomService {
 
     return room;
   }
+
+  async getAllRooms(payload) {
+    const rooms = await roomModel
+      .find({ roomType: { $in: payload } })
+      .populate("speakers")
+      .populate("ownerId");
+    return rooms;
+  }
 }
 
 module.exports = new RoomService();

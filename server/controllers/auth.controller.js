@@ -112,7 +112,7 @@ class AuthControllers {
     try {
       userData = await tokenService.verifyRefreshToken(refreshTokenFromCookie);
     } catch (err) {
-      return res.status(401).message({ message: "Invalid Token" });
+      return res.status(401).json({ message: "Invalid Token" });
     }
 
     try {

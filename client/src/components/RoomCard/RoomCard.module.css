@@ -24,7 +24,7 @@
   background: #1d1d1d;
 }
 
-.speakersAvatars img:last-child {
+.multi img:last-child {
   top: 20px;
   left: 20px;
 }
@@ -51,3 +51,14 @@
   margin-right: 5px;
 }
 
+.nameWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.nameWrapper span {
+  text-align: end;
+  width: 100px;
+}

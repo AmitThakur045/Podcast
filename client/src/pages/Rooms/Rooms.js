@@ -1,72 +1,84 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { HiUserGroup } from "react-icons/hi";
 import AddRoomModal from "../../components/AddRoomModal/AddRoomModal";
 import RoomCard from "../../components/RoomCard/RoomCard";
 import styles from "./Rooms.module.css";
+import { getAllRooms } from "../../API";
 
-const dummy = [
-  {
-    id: 1,
-    topic: "Best anime in every decade?",
-    speakers: [
-      {
-        id: 1,
-        name: "Amit",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-      {
-        id: 1,
-        name: "Chirag",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 2,
-    topic: "World class movies",
-    speakers: [
-      {
-        id: 1,
-        name: "Amit",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-      {
-        id: 1,
-        name: "Chirag",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-  {
-    id: 3,
-    topic: "topic 33",
-    speakers: [
-      {
-        id: 1,
-        name: "Amit",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-      {
-        id: 1,
-        name: "Chirag",
-        avatar:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
-      },
-    ],
-    totalPeople: 40,
-  },
-];
+// const dummy = [
+//   {
+//     id: 1,
+//     topic: "Best anime in every decade?",
+//     speakers: [
+//       {
+//         id: 1,
+//         name: "Amit",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//       {
+//         id: 1,
+//         name: "Chirag",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//     ],
+//     totalPeople: 40,
+//   },
+//   {
+//     id: 2,
+//     topic: "World class movies",
+//     speakers: [
+//       {
+//         id: 1,
+//         name: "Amit",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//       {
+//         id: 1,
+//         name: "Chirag",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//     ],
+//     totalPeople: 40,
+//   },
+//   {
+//     id: 3,
+//     topic: "topic 33",
+//     speakers: [
+//       {
+//         id: 1,
+//         name: "Amit",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//       {
+//         id: 1,
+//         name: "Chirag",
+//         avatar:
+//           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png",
+//       },
+//     ],
+//     totalPeople: 40,
+//   },
+// ];
 
 const Rooms = () => {
   const [showModal, setShowModal] = useState(false);
+  const [roomList, setRoomList] = useState([]);
+
+  const fetchRooms = async () => {
+    const { data } = await getAllRooms();
+    setRoomList(data);
+  };
+
+  useEffect(() => {
+    console.log("fetch");
+    fetchRooms();
+  }, []);
 
   const showModalHandler = () => {
     setShowModal(true);
@@ -98,7 +110,7 @@ const Rooms = () => {
           </div>
         </div>
         <div className={styles.roomList}>
-          {dummy.map((room, index) => (
+          {roomList.map((room, index) => (
             <RoomCard key={index} room={room} />
           ))}
         </div>
