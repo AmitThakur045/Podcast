@@ -21,6 +21,11 @@ class RoomService {
       .populate("ownerId");
     return rooms;
   }
+
+  async getRoomData(roomId) {
+    const room = await roomModel.findOne({ _id: roomId });
+    return room;
+  }
 }
 
 module.exports = new RoomService();

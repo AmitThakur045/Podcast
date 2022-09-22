@@ -82,6 +82,29 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Handle Mute and UnMute
+  socket.on(ACTIONS.MUTE, ({ roomId, userId }) => {
+    const client = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+
+    client.forEach((clientId) => {
+      io.to(clientId).emit(ACTIONS.MUTE, {
+        peerId: socket.id,
+        userId,
+      });
+    });
+  });
+
+  socket.on(ACTIONS.UNMUTE, ({ roomId, userId }) => {
+    const client = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+
+    client.forEach((clientId) => {
+      io.to(clientId).emit(ACTIONS.UNMUTE, {
+        peerId: socket.id,
+        userId,
+      });
+    });
+  });
+
   // leaving the room
   const leaveRoom = ({ roomId }) => {
     const { rooms } = socket;

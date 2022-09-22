@@ -10,6 +10,7 @@ export const useWebRTC = (roomId, user) => {
   const connections = useRef({});
   const localMediaStream = useRef(null);
   const socketRef = useRef(null);
+  const clientsRef = useRef([]);
 
   useEffect(() => {
     socketRef.current = socketInit();
@@ -36,7 +37,7 @@ export const useWebRTC = (roomId, user) => {
     };
 
     startCapture().then(() =>
-      addNewClient(user, () => {
+      addNewClient({ ...user, muted: true }, () => {
         const localAudioElement = audioElements.current[user.id];
         if (localAudioElement) {
           localAudioElement.volume = 0;
@@ -81,7 +82,7 @@ export const useWebRTC = (roomId, user) => {
 
       // handle on track on this connections
       connections.current[peerId].ontrack = ({ streams: [remoteStream] }) => {
-        addNewClient(remoteUser, () => {
+        addNewClient({ ...remoteUser, muted: true }, () => {
           // check if audio element is present for the remote user
           if (audioElements.current[remoteUser.id]) {
             audioElements.current[remoteUser.id].srcObject = remoteStream;
@@ -134,10 +135,6 @@ export const useWebRTC = (roomId, user) => {
         connections.current[peerId].addIceCandidate(icecandidate);
       }
     });
-
-    // return () => {
-    //   connections.current.off(ACTIONS.ICE_CANDIDATE);
-    // };
   }, []);
 
   // handle SDP
@@ -165,10 +162,6 @@ export const useWebRTC = (roomId, user) => {
     };
 
     socketRef.current.on(ACTIONS.SESSION_DESCRIPTION, handleRemoteSDP);
-
-    // return () => {
-    //   connections.current.off(ACTIONS.SESSION_DESCRIPTION);
-    // };
   }, []);
 
   // handle remove peer
@@ -191,9 +184,62 @@ export const useWebRTC = (roomId, user) => {
     };
   });
 
+  useEffect(() => {
+    clientsRef.current = clients;
+  }, [clients]);
+
+  // listen for mute and Unmute
+  useEffect(() => {
+    socketRef.current.on(ACTIONS.MUTE, ({ peerId, userId }) => {
+      setMute(true, userId);
+    });
+
+    socketRef.current.on(ACTIONS.UNMUTE, ({ peerId, userId }) => {
+      setMute(false, userId);
+    });
+
+    const setMute = (mute, userId) => {
+      // toggle the muted property of user with user from client list
+      // geting the index of userId by converting the client array to ClientId arrray
+      const clientIdx = clientsRef.current
+        .map((client) => client.id)
+        .indexOf(userId);
+
+      console.log("idx", clientIdx);
+
+      const connectedClients = JSON.parse(JSON.stringify(clientsRef.current));
+      // user with userId is present or not
+      if (clientIdx > -1) {
+        connectedClients[clientIdx].muted = mute;
+        // updating the client array
+        setClients(connectedClients);
+      }
+    };
+  }, []);
+
   const provideRef = (instance, userId) => {
     audioElements.current[userId] = instance;
   };
 
-  return { clients, provideRef };
+  // handling Mute and Unmute
+  const handleMute = (isMute, userId) => {
+    let flag = false;
+    let interval = setInterval(() => {
+      if (localMediaStream.current) {
+        localMediaStream.current.getTracks()[0].enabled = !isMute;
+        if (isMute) {
+          socketRef.current.emit(ACTIONS.MUTE, { roomId, userId });
+        } else {
+          socketRef.current.emit(ACTIONS.UNMUTE, { roomId, userId });
+        }
+        flag = true;
+      }
+
+      if (flag) {
+        clearInterval(interval);
+      }
+    }, 200);
+  };
+
+  return { clients, provideRef, handleMute };
 };
