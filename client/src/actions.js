@@ -9,4 +9,5 @@ export const ACTIONS = {
   REMOVE_PEER: "remove-peer",
   MUTE: "mute",
   UNMUTE: "un-mute",
+  MUTE_INFO: "mute-info",
 };
