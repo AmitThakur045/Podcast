@@ -16,7 +16,9 @@ const userSchema = new Schema(
     },
     phone: {
       type: String,
-      required: true,
+    },
+    email: {
+      type: String,
     },
     activated: {
       type: Boolean,

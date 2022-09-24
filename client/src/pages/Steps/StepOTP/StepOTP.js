@@ -12,14 +12,15 @@ const StepOTP = ({ onClick }) => {
   const [otp, setOtp] = useState("");
   const dispatch = useDispatch();
   // fetching the phone and hash from global auth store
-  const { phone, hash } = useSelector((state) => state.auth.otp);
+  const { phone, email, hash } = useSelector((state) => state.auth.otp);
 
   const handleSubmit = async () => {
-    if (!otp || !hash || !hash) return;
+    if (!otp || !hash || !(phone || email)) return;
     try {
       const { data } = await verifyOtp({
         otp,
         phone,
+        email,
         hash,
       });
       console.log(data);

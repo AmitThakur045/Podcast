@@ -6,28 +6,44 @@ const UserDto = require("../dtos/user.dto");
 
 class AuthControllers {
   async sendOtp(req, res) {
-    const { phone } = req.body;
+    const { phone, email } = req.body;
 
-    if (!phone) {
+    if (!phone && !email) {
       res.status(400).json({
-        message: "Phone field is required",
+        message: "Phone or Email field is required",
       });
     }
 
     const otp = await otpService.generateOtp();
+    let type;
+    if (phone) type = phone;
+    else type = email;
 
     // time to leave
     const ttl = 1000 * 60 * 2; // 2 min
     const expires = Date.now() + ttl;
-    const data = `${phone}.${otp}.${expires}`;
+    const data = `${type}.${otp}.${expires}`;
     const hash = hashService.hashOtp(data);
 
     // send OTP
     try {
-      // await otpService.sendBySms(phone, otp);
+      if (phone) {
+        // await otpService.sendBySms(phone, otp);
+      } else if (email) {
+        await otpService.sendMail({
+          to: email,
+          from: "at7129652@gmail.com",
+          subject: "Welcome to PodCast",
+          text: `Welcome to PODCAST Your OTP is ${otp}`,
+          html: `<h1>Welcome to PODCAST</h1>
+                  <p>Your OTP is ${otp}</p>`,
+        });
+      }
+
       return res.json({
         hash: `${hash}${expires}`,
         phone,
+        email,
         otp,
       });
     } catch (err) {
@@ -39,9 +55,9 @@ class AuthControllers {
   }
 
   async verifyOtp(req, res) {
-    const { otp, phone, hash } = req.body;
+    const { otp, phone, email, hash } = req.body;
 
-    if (!otp || !phone || !hash) {
+    if (!otp || !hash || !(phone || email)) {
       return res.status(400).status({ message: "All fields are required" });
     }
 
@@ -53,8 +69,12 @@ class AuthControllers {
       });
     }
 
+    let type;
+    if (phone) type = phone;
+    else type = email;
+
     // custom hash
-    const data = `${phone}.${otp}.${expires}`;
+    const data = `${type}.${otp}.${expires}`;
     // check if the otp is correct or not
     const isValid = otpService.verifyOtp(hashedOtp, data);
 
@@ -68,11 +88,18 @@ class AuthControllers {
     // check if user existed or not
     // if user didn't existed create one
     try {
-      user = await userService.findUser({ phone: phone });
+      if (phone) user = await userService.findUser({ phone: phone });
+      else user = await userService.findUser({ email: email });
       if (!user) {
-        user = await userService.createUser({
-          phone: phone,
-        });
+        if (phone) {
+          user = await userService.createUser({
+            phone: phone,
+          });
+        } else {
+          user = await userService.createUser({
+            email: email,
+          });
+        }
       }
     } catch (err) {
       console.log(err);

@@ -4,9 +4,27 @@ import Button from "../../../../components/Button/Button";
 import { AiOutlineMail } from "react-icons/ai";
 import TextInput from "../../../../components/TextInput/TextInput";
 import styles from "../StepPhoneEmail.module.css";
+import { sendOtp } from "../../../../API";
+import { setOtp } from "../../../../store/authSlice";
+import { useDispatch } from "react-redux";
 
 const Email = ({ onClick }) => {
   const [email, setEmail] = useState("");
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    if (!email) return;
+    // server request
+    try {
+      const { data } = await sendOtp({ phone: "", email: email });
+      dispatch(
+        setOtp({ phone: data.phone, email: data.email, hash: data.hash })
+      );
+      onClick();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <Card
@@ -20,7 +38,7 @@ const Email = ({ onClick }) => {
       />
       <div>
         <div className={styles.actionButtonWrap}>
-          <Button onClick={onClick} text="Next" />
+          <Button onClick={handleSubmit} text="Next" />
         </div>
         <p className={styles.paragraph}>
           By entering your email id, you're agreeing to our Terms of Service and

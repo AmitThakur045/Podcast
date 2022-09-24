@@ -16,8 +16,10 @@ const Phone = ({ onClick }) => {
     if (!phone) return;
     // server request
     try {
-      const { data } = await sendOtp({ phone: phone });
-      dispatch(setOtp({ phone: data.phone, hash: data.hash }));
+      const { data } = await sendOtp({ phone: phone, email: "" });
+      dispatch(
+        setOtp({ phone: data.phone, email: data.email, hash: data.hash })
+      );
       onClick();
     } catch (err) {
       console.log(err);

@@ -1,11 +1,14 @@
 const crypto = require("crypto");
 const hashService = require("./hash.service");
+const sgMail = require("@sendgrid/mail");
 
 const smsSid = process.env.SMS_SID;
 const smsAuthToken = process.env.SMS_AUTH_TOKEN;
 const twilio = require("twilio")(smsSid, smsAuthToken, {
   lazyloading: true,
 });
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 class OtpService {
   async generateOtp() {
@@ -20,6 +23,18 @@ class OtpService {
       from: process.env.SMS_FROM_NUMBER,
       body: `Your PODCAST otp is ${otp}`,
     });
+  }
+
+  async sendMail(msg) {
+    try {
+      await sgMail.send(msg);
+    } catch (err) {
+      console.log(err);
+
+      if (err.resposne) {
+        console.log(err.response.body);
+      }
+    }
   }
 
   async verifyOtp(hashedOtp, data) {

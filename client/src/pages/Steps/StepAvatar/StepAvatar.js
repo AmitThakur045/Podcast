@@ -9,6 +9,7 @@ import profile from "../../../Assets/image/profile.jpg";
 import { activate } from "../../../API";
 import { setAuth } from "../../../store/authSlice";
 import Loader from "../../../components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const StepAvatar = ({ onClick }) => {
   const [image, setImage] = useState(profile);
@@ -17,6 +18,7 @@ const StepAvatar = ({ onClick }) => {
 
   const { name, avatar } = useSelector((state) => state.activate);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!name || !avatar) return;
@@ -30,6 +32,7 @@ const StepAvatar = ({ onClick }) => {
         // updating the user credentials in store
         if (unMounted) dispatch(setAuth(data));
       }
+      navigate("/rooms");
     } catch (err) {
       // toastify
       console.log(err);
